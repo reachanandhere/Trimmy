@@ -1,12 +1,26 @@
 import Login from "@/components/Login";
-import Signup from "@/components/Signup";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import SignUp from "@/components/Signup";
 
-import React from "react";
-import { useSearchParams } from "react-router-dom";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { UrlState } from "@/context";
+
+import React, { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
+    const longURL = searchParams.get("createNew")
+    const navigate = useNavigate()
+
+
+    const { isAuthenticated, loading } = UrlState()
+
+    useEffect(()=>{
+        if(isAuthenticated && !loading){
+            navigate(`/dashboard?${longURL ? `createNew=${longURL}` : ""}`);
+        }
+    }, [isAuthenticated, loading])
+
   return (
     <div className="mt-30 flex flex-col items-center gap-10">
       <h1 className="text-5xl font-extrabold">
@@ -21,7 +35,7 @@ const Auth = () => {
           <TabsTrigger value="signup">Sign Up</TabsTrigger>
         </TabsList>
         <TabsContent value="login">  <Login /> </TabsContent>
-        <TabsContent value="signup"> <Signup /> </TabsContent>
+        <TabsContent value="signup"> <SignUp /> </TabsContent>
       </Tabs>
     </div>
   );

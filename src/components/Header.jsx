@@ -10,10 +10,11 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { LinkIcon, LogOut } from "lucide-react";
 
 const Header = () => {
   const navigate = useNavigate();
-  const user = false;
+  const user = true;
   return (
     <nav className="py-4 flex justify-between items-center">
       <Link to="/">
@@ -25,16 +26,19 @@ const Header = () => {
             <DropdownMenuTrigger>
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>AV</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>Anand Verma</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Billing</DropdownMenuItem>
-              <DropdownMenuItem>Team</DropdownMenuItem>
-              <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuItem>
+                <LinkIcon className="mr-2 h-4 w-4" /> <span>My Links</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-red-400">
+                <LogOut  className="mr-2 h-4 w-4" /> <span>Logout</span>
+              </DropdownMenuItem>
+              
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (

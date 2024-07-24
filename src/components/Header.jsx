@@ -20,7 +20,7 @@ const Header = () => {
 
   const { user, fetchUser } = UrlState();
   const { loading, fn: fnLogout } = useFetch(logout);
-
+ 
   return (
     <nav className="py-4 flex justify-between items-center">
       <Link to="/">
@@ -31,7 +31,7 @@ const Header = () => {
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src={user.user_metadata.profile_pic} />
                 <AvatarFallback>AV</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
@@ -39,14 +39,16 @@ const Header = () => {
               <DropdownMenuLabel>{user?.user_metadata?.name}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <LinkIcon className="mr-2 h-4 w-4" /> <span>My Links</span>
+                <Link to={'/dashboard'} className="flex">
+                  <LinkIcon className="mr-2 h-4 w-4" /> <span>My Links</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="text-red-400">
                 <LogOut className="mr-2 h-4 w-4" />{" "}
                 <span
                   onClick={() => {
                     fnLogout().then(() => {
-                        fetchUser()
+                      fetchUser();
                       navigate("/");
                     });
                   }}

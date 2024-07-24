@@ -1,6 +1,7 @@
-import supabase from "./supabase";
+import supabase, { supabaseUrl }  from "./supabase";
 
-export async function getUrls({ user_id }) {
+export async function getUrls(user_id) {
+ 
   const { data, error } = await supabase
     .from("URLs")
     .select("*")
@@ -12,6 +13,23 @@ export async function getUrls({ user_id }) {
     }
     return data;
 }
+
+export async function getUrl({id, user_id}) {
+  const {data, error} = await supabase
+    .from("URLs")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user_id)
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Short Url not found");
+  }
+
+  return data;
+}
+
 
 
 export async function deleteUrl(id) {
@@ -26,19 +44,20 @@ export async function deleteUrl(id) {
 }
 
 export async function createUrl({title, longUrl, customUrl, user_id}, qrcode) {
-  const short_url = Math.random().toString(62).substring(2, 9);
+  const short_url = Math.random().toString(36).substr(2, 9);
+  console.log(short_url)
   const fileName = `qr-${short_url}`;
 
   const {error: storageError} = await supabase.storage
-    .from("qrs")
+    .from("Qrs")
     .upload(fileName, qrcode);
 
   if (storageError) throw new Error(storageError?.message);
 
-  const qr = `${supabaseUrl}/storage/v1/object/public/qrs/${fileName}`;
+  const qr = `${supabaseUrl}/storage/v1/object/public/Qrs/${fileName}`;
 
   const {data, error} = await supabase
-    .from("urls")
+    .from("URLs")
     .insert([
       {
         title,
@@ -57,4 +76,19 @@ export async function createUrl({title, longUrl, customUrl, user_id}, qrcode) {
   }
 
   return data;
+}
+
+export async function getLongUrl(id) {
+  let {data: shortLinkData, error: shortLinkError} = await supabase
+    .from("URLs")
+    .select("id, original_url")
+    .or(`short_url.eq.${id},custom_url.eq.${id}`)
+    .single();
+
+  if (shortLinkError && shortLinkError.code !== "PGRST116") {
+    console.error("Error fetching short link:", shortLinkError);
+    return;
+  }
+
+  return shortLinkData;
 }
